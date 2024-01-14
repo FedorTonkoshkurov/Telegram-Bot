@@ -1,5 +1,5 @@
-import datetime
 import telebot
+import datetime
 import random
 
 bot = telebot.TeleBot('Telegram Bot API Key')
@@ -61,13 +61,23 @@ def create_task(message):
 
 @bot.message_handler(commands=['viewtasks'])
 def view_tasks(message):
-    global task_id
-    global task_date
+    global task_id, task_date
     if tasks:
         for task_id, task_date in tasks.items():
             bot.send_message(message.from_user.id, f" {task_names[task_id]}: {task_date}")
     else:
         bot.send_message(message.from_user.id, 'У вас ещё нет ни одной задачи.')
+
+
+def check_tasks(message):
+    global task_id, task_date
+    current_day = datetime.datetime.now().strftime('%d')
+    while True:
+        if tasks != {}:
+            for i in range(len(tasks)):
+                if tasks[i] == current_day:
+                    bot.send_message(message.from_user.id, f'Сегодня вы хотели {task_names[i]}')
+                    del tasks[i], task_names[i]
 
 
 if __name__ == '__main__':
